@@ -15,6 +15,7 @@ class Config():
     self.loss_criterion = None
     self.lstm_output = None
     self.shuffle = None
+    self.thresholds = None
     for key,value in kwargs.items():
       self.__dict__[key] = value
     print('\n'.join(["{}={}".format(p,self.__dict__[p]) for p in self.__dict__]))

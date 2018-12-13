@@ -12,7 +12,7 @@ from doa_stats import ToleranceScore
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-def compute_stats(config,thresholds):
+def compute_tolerance_scores(config,thresholds):
   model = config.model
   _,_,test_loader = config.get_loaders()
   doa_classes = config.doa_classes
@@ -39,6 +39,9 @@ def compute_stats(config,thresholds):
           Yhat = torch.sum(Yhat, 1)/25
           Y = Y[:, 0]
       tolerance_score.update(Yhat,Y)
+
+def compute_stats(config,thresholds):
+  compute_tolerance(scores
 
 def inference_model(network,lstmout,out_format):
   if out_format == "cartesian":
