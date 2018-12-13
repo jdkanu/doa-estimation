@@ -7,18 +7,18 @@ import argparse
 import torch
 from model import CRNN, ConvNet, LSTM_FIRST, LSTM_FULL, LSTM_LAST
 from doa_math import DoaClasses,to_cartesian,to_class
-from doa_stats import ToleranceScore
+from doa_stats import ToleranceScore,SNRCurve
 
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-def compute_tolerance_scores(config,thresholds):
+def compute_tolerance_score(config):
   model = config.model
   _,_,test_loader = config.get_loaders()
   doa_classes = config.doa_classes
   all_lstm_frames = config.all_lstm_frames()
 
-  tolerance_score = ToleranceScore(thresholds,doa_classes)
+  tolerance_score = ToleranceScore(config.thresholds,doa_classes)
   
   CC = CX = XC = XX = 0
   with torch.no_grad():
@@ -40,8 +40,16 @@ def compute_tolerance_scores(config,thresholds):
           Y = Y[:, 0]
       tolerance_score.update(Yhat,Y)
 
-def compute_stats(config,thresholds):
-  compute_tolerance(scores
+  return tolerance_score
+
+def compute_SNR_curve(config):
+  SNR_curve = None
+  
+  return SNR_curve
+
+def compute_stats(config):
+  tolerance_score = compute_tolerance_score(config)
+  SNR_curve = compute_SNR_curve(config)
 
 def inference_model(network,lstmout,out_format):
   if out_format == "cartesian":
@@ -88,6 +96,7 @@ if __name__ == "__main__":
   config = Config(data_folder=args.data_dir,\
                   model=model,\
                   doa_classes=doa_classes,\
-                  lstm_output=args.lstmout)
-  compute_stats(config,[5,10,15])
+                  lstm_output=args.lstmout,\
+                  thresholds=[5,10,15])
+  compute_stats(config)
 

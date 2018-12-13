@@ -36,3 +36,6 @@ def angular_errors(Yhat,Y,thresholds,doa_classes):
   xx = ratios_less(tensor_angle(Yhat,Y),thresholds)
   return cc,cx,xc,xx
   
+class SNRCurve:
+  def __init__(self):
+    None
