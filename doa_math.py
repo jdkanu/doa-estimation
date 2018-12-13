@@ -1,8 +1,7 @@
 import math
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import torch
+from graphics import plot_3d
 
 class DoaClass():
   def __init__(self, elevation, azimuth):
@@ -30,8 +29,6 @@ class DoaClasses():
     return direction_classes
 
   def plot_classes(self):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
     xs = []
     ys = []
     zs = []
@@ -39,13 +36,7 @@ class DoaClasses():
       xs.append(doa_class.x)
       ys.append(doa_class.y)
       zs.append(doa_class.z)
-    zeros = [0]*len(self.classes)
-    ax.scatter(xs,ys,zs,s=2)
-  #  ax.quiver(zeros,zeros,zeros,xs,ys,zs,arrow_length_ratio=0.01)
-  #  ax.set_xlim3d(-1, 1)
-  #  ax.set_ylim3d(-1,1)
-  #  ax.set_zlim3d(-1,1)
-    plt.show()
+    plot_3d(xs,ys,zs)
 
 def tensor_angle(a, b):
   inner_product = (a * b).sum(dim=1)

@@ -25,7 +25,7 @@ class Config():
   def get_loaders(self):
     return self.train_loader,self.val_loader,self.test_loader
 
-  def all_lstm_frames(self):
+  def use_all_lstm_frames(self):
     return self.lstm_output == LSTM_FULL and isinstance(self.model, CRNN)
 
 class Dropouts():

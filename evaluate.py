@@ -16,7 +16,7 @@ def compute_tolerance_score(config):
   model = config.model
   _,_,test_loader = config.get_loaders()
   doa_classes = config.doa_classes
-  all_lstm_frames = config.all_lstm_frames()
+  use_all_lstm_frames = config.use_all_lstm_frames()
 
   tolerance_score = ToleranceScore(config.thresholds,doa_classes)
   
@@ -29,27 +29,26 @@ def compute_tolerance_score(config):
       Y = Y.to(device)
       Yhat = model(X)
       if doa_classes:
-        if all_lstm_frames:
+        if use_all_lstm_frames:
           Yhat = torch.sum(Yhat, 2)
           Y = Y[:, 0] # Can take the 0th b/c labels identical for frames
         _, Yhat = torch.max(Yhat, 1)
         Yhat = [to_cartesian(x,doa_classes) for x in Yhat]
       else:
-        if all_lstm_frames:
+        if use_all_lstm_frames:
           Yhat = torch.sum(Yhat, 1)/25
           Y = Y[:, 0]
       tolerance_score.update(Yhat,Y)
 
   return tolerance_score
 
-def compute_SNR_curve(config):
+def plot_SNR_curve(scores):
   SNR_curve = None
   
   return SNR_curve
 
 def compute_stats(config):
   tolerance_score = compute_tolerance_score(config)
-  SNR_curve = compute_SNR_curve(config)
 
 def inference_model(network,lstmout,out_format):
   if out_format == "cartesian":
@@ -75,9 +74,9 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser(prog='evaluate',\
                 description="""Script to evaluate the DOA estimation system""")
-  parser.add_argument("--data_dir", "-d", default="data", required=True,\
-                help="Directory where data and labels are")
-  parser.add_argument("--log_path", "-log", default=".", required=True,\
+  parser.add_argument("--data_dirs", "-d", default="data", required=True,\
+                help="Directory where data and labels are", type=str)
+  parser.add_argument("--log_dirs", "-log", default=".", required=True,\
                 help="Path to log results", type=str)
   parser.add_argument("--model_path", "-m", required=True,\
                 help="Path to saved model")
@@ -93,10 +92,16 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   model,doa_classes = inference_model(args.network, args.lstm_out, args.out_format)
-  config = Config(data_folder=args.data_dir,\
-                  model=model,\
-                  doa_classes=doa_classes,\
-                  lstm_output=args.lstmout,\
-                  thresholds=[5,10,15])
-  compute_stats(config)
+  data_dirs = args.data_dirs.split(',')
+  log_dirs = args.log_dirs.split(',')
+  tolerance_scores = []
+  for data_dir,log_dir in zip(data_dirs,log_dirs):
+    config = Config(data_folder=data_dir,\
+                    model=model,\
+                    doa_classes=doa_classes,\
+                    lstm_output=args.lstmout,\
+                    results_dir=log_dir,\
+                    thresholds=[5,10,15])
+    score = compute_tolerance_score(config)
+    tolerance_scores.append(score)
 

@@ -82,7 +82,7 @@ def doa_train(config):
                     total_val_loss += loss.item()
                     total_labels += len(labels)
                     if doa_classes:
-                        if config.all_lstm_frames():
+                        if config.use_all_lstm_frames():
                             outputs = torch.sum(outputs, 2)
                             labels = labels[:, 0] # Can take the 0th b/c labels identical for frames
                         _, predicted = torch.max(outputs, 1)
@@ -90,7 +90,7 @@ def doa_train(config):
                         L = [to_cartesian(x,doa_classes) for x in labels]
                         angles = tensor_angle(torch.tensor(P), torch.tensor(L))
                     else:
-                        if config.all_lstm_frames():
+                        if config.use_all_lstm_frames():
                             outputs = torch.sum(outputs, 1)/25
                             labels = labels[:, 0]
                         angles = tensor_angle(outputs, labels)
