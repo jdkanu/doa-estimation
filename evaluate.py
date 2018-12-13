@@ -8,6 +8,7 @@ import torch
 from model import CRNN, ConvNet, LSTM_FIRST, LSTM_FULL, LSTM_LAST
 from doa_math import DoaClasses,to_cartesian,to_class
 from doa_stats import ToleranceScore,SNRCurve
+from graphics import plot_curve
 
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -42,10 +43,8 @@ def compute_tolerance_score(config):
 
   return tolerance_score
 
-def plot_SNR_curve(scores):
-  SNR_curve = None
-  
-  return SNR_curve
+def plot_SNR_curve(curve):
+  plot_curve(curve)
 
 def compute_stats(config):
   tolerance_score = compute_tolerance_score(config)
