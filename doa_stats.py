@@ -43,3 +43,4 @@ class SNRTestDatasets:
 class SNRCurve:
   def __init__(self,):
     tolerance_scores = [ToleranceScore() for i in]
+    
