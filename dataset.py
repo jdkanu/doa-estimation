@@ -1,8 +1,10 @@
+import os
 import numpy as np
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from sklearn.model_selection import train_test_split
 from doa_math import to_class
+import csv
 
 class CustomDataset(Dataset):
   def __init__(self, data_entries, config):
@@ -30,7 +32,7 @@ class CustomDataset(Dataset):
 
     return data, label
 
-def read_data_entries(labelpath):
+def read_data_entries(labelpath,data_folder):
   # initialize dataset
   if not os.path.exists(labelpath):
     print("file does not exist")
@@ -49,7 +51,7 @@ def read_data_entries(labelpath):
   return data_entries
 
 def generate_loader(config,data_entries,shuffle=False):
-  dataset = CustomDataset(data_entries,config)
+  train_dataset = CustomDataset(data_entries,config)
   return DataLoader(dataset=train_dataset,batch_size=config.batch_size,\
                     shuffle=shuffle,num_workers=0)
 
@@ -57,14 +59,14 @@ def generate_loaders(config):
   train_labels_path = os.path.join(config.data_folder,'train_labels.csv')
   test_labels_path = os.path.join(config.data_folder,'test_labels.csv')
 
-  train_data_entries = read_data_entries(train_labels_path)
-  train_data_entries, val_data_entries = train_test_split(data_entries,\
+  train_data_entries = read_data_entries(train_labels_path,config.data_folder)
+  train_data_entries, val_data_entries = train_test_split(train_data_entries,\
                             test_size=config.test_to_all_ratio, random_state=11)
-  test_data_entries = read_data_entries(test_labels_path)
+  test_data_entries = read_data_entries(test_labels_path,config.data_folder)
   
   train_loader = generate_loader(config,train_data_entries,shuffle=True)
   val_loader = generate_loader(config,val_data_entries)
-  test_loader = generate_loader(test_data_entries)
+  test_loader = generate_loader(config,test_data_entries)
   
   return train_loader,val_loader,test_loader
 

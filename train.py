@@ -119,8 +119,7 @@ def doa_train(config):
             break  # early stop break
     return lowest_error
 
-
-if __name__ == "__main__":
+def main():
     if torch.cuda.is_available():
         torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -180,3 +179,5 @@ if __name__ == "__main__":
                             shuffle=True)
             doa_train(config)
 
+if __name__ == "__main__":
+  main()

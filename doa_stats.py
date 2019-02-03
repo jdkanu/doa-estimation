@@ -36,11 +36,12 @@ def angular_errors(Yhat,Y,thresholds,doa_classes):
   xx = ratios_less(tensor_angle(Yhat,Y),thresholds)
   return cc,cx,xc,xx
   
+'''  
 class SNRTestDatasets:
   def __init__(self):
-    
+    None
 
 class SNRCurve:
   def __init__(self,):
     tolerance_scores = [ToleranceScore() for i in]
-    
+'''

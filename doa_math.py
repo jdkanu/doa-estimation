@@ -3,18 +3,9 @@ import numpy as np
 import torch
 from graphics import plot_3d
 
-class DoaClass():
-  def __init__(self, elevation, azimuth):
-    self.elevation = elevation
-    self.azimuth = azimuth
-    self.inclination = (np.pi/2) - self.elevation
-    self.x = np.sin(self.inclination)*np.cos(self.azimuth)
-    self.y = np.sin(self.inclination)*np.sin(self.azimuth)
-    self.z = np.cos(self.inclination)
-
 class DoaClasses():
   def __init__(self, doa_grid_resolution = np.pi/18):
-    self.classes = self.generate_direction_classes(doa_grid_resolution) 
+    self.classes = self.generate_direction_classes(doa_grid_resolution)
 
   def generate_direction_classes(self, resolution):
     direction_classes = []
@@ -22,7 +13,7 @@ class DoaClasses():
     for i in range(num_elevations):
       elevation = (-np.pi/2) + np.pi*i/num_elevations
       num_azimuths = int(2*np.pi*np.cos(elevation)//resolution)
-      for j in range(num_azimuths+1):
+      for j in range(num_azimuths):
         azimuth = -np.pi + 2*np.pi*j/(num_azimuths + 1)
         direction_classes.append(DoaClass(elevation, azimuth))
 
@@ -37,6 +28,15 @@ class DoaClasses():
       ys.append(doa_class.y)
       zs.append(doa_class.z)
     plot_3d(xs,ys,zs)
+
+class DoaClass():
+  def __init__(self, elevation, azimuth):
+    self.elevation = elevation
+    self.azimuth = azimuth
+    self.inclination = (np.pi/2) - self.elevation
+    self.x = np.sin(self.inclination)*np.cos(self.azimuth)
+    self.y = np.sin(self.inclination)*np.sin(self.azimuth)
+    self.z = np.cos(self.inclination)
 
 def tensor_angle(a, b):
   inner_product = (a * b).sum(dim=1)

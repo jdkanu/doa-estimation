@@ -19,7 +19,7 @@ class Config():
     for key,value in kwargs.items():
       self.__dict__[key] = value
     print('\n'.join(["{}={}".format(p,self.__dict__[p]) for p in self.__dict__]))
-    
+
     self.train_loader,self.val_loader,self.test_loader = generate_loaders(self)
     
   def get_loaders(self):
